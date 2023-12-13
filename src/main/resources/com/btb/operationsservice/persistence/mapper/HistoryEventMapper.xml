@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.btb.operationsservice.persistence.mapper.HistoryEventMapper">
+
+    <sql id="tableName">HISTORY_EVENTS</sql>
+
+    <resultMap id="resultMap" type="com.btb.operationsservice.entity.HistoryEvent">
+
+        <id property="id" column="ID" javaType="Long" jdbcType="BIGINT" />
+
+        <result property="userId" column="USER_ID" javaType="String" jdbcType="VARCHAR" />
+
+        <result property="atDatetime" column="AT_DATETIME" javaType="String" jdbcType="VARCHAR" />
+
+        <result property="description" column="DESCRIPTION" javaType="String" jdbcType="VARCHAR" />
+
+        <association property="eventType" column="EVENT_TYPE_ID" javaType="com.btb.operationsservice.entity.EventType"
+                     fetchType="lazy" select="com.btb.operationsservice.persistence.mapper.EventTypeMapper.findById"/>
+
+    </resultMap>
+
+    <sql id="selectColumnNamesClause">
+        RES.ID,
+        RES.USER_ID,
+        RES.AT_DATETIME,
+        RES.DESCRIPTION,
+        RES.EVENT_TYPE_ID
+    </sql>
+
+    <sql id="whereFilteredClause">
+        <if test="id != null">
+            AND RES.ID=#{id}
+        </if>
+        <if test="userId != null">
+            AND RES.USER_ID=#{userId}
+        </if>
+        <if test="atDatetime != null">
+            AND RES.AT_DATETIME=#{atDatetime}
+        </if>
+        <if test="description != null">
+            AND RES.DESCRIPTION=#{description}
+        </if>
+        <if test="eventType != null and eventType.id != null">
+            AND RES.EVENT_TYPE_ID=#{eventType.id}
+        </if>
+    </sql>
+
+    <sql id="insertColumnNamesClause">
+        USER_ID
+        ,AT_DATETIME
+        ,DESCRIPTION
+        ,EVENT_TYPE_ID
+    </sql>
+
+    <sql id="insertValuesClause">
+        #{userId}
+        ,#{atDatetime}
+        ,#{description}
+        ,#{eventType.id}
+    </sql>
+
+    <sql id="updateSetClause">
+        USER_ID=#{userId}
+        ,AT_DATETIME=#{atDatetime}
+        ,DESCRIPTION=#{description}
+        ,EVENT_TYPE_ID=#{eventType.id}
+    </sql>
+
+    <select id="findById" resultMap="resultMap" parameterType="Long">
+        select
+        <include refid="selectColumnNamesClause" />
+        from
+        <include refid="tableName" />
+        RES
+        where
+        RES.ID=#{value}
+    </select>
+
+    <select id="findHistoryEventsByUserId" resultMap="resultMap" parameterType="Long">
+        select
+        <include refid="selectColumnNamesClause" />
+        from
+        <include refid="tableName" />
+        RES
+        where
+        RES.USER_ID =#{value}
+    </select>
+
+    <select id="findAll" resultMap="resultMap">
+        select
+        <include refid="selectColumnNamesClause" />
+        from
+        <include refid="tableName" />
+        RES
+        order by
+        RES.ID asc
+    </select>
+
+    <select id="findByFilter" resultMap="resultMap"
+            parameterType="com.btb.operationsservice.entity.HistoryEvent">
+        select
+        <include refid="selectColumnNamesClause" />
+        from
+        <include refid="tableName" />
+        RES
+        where 1=1
+        <include refid="whereFilteredClause" />
+        order by
+        RES.ID asc
+    </select>
+
+    <insert id="save" parameterType="com.btb.operationsservice.entity.HistoryEvent"
+            useGeneratedKeys="true" keyColumn="ID" keyProperty="id">
+        insert into
+        <include refid="tableName" />
+        (
+        <include refid="insertColumnNamesClause" />
+        )
+        values
+        (
+        <include refid="insertValuesClause" />
+        )
+    </insert>
+
+    <update id="update" parameterType="com.btb.operationsservice.entity.HistoryEvent">
+        update
+        <include refid="tableName" />
+        set
+        <include refid="updateSetClause" />
+        where
+        ID=#{id}
+    </update>
+
+    <delete id="delete" parameterType="Long">
+        delete from
+        <include refid="tableName" />
+        where
+        ID=#{value}
+    </delete>
+
+</mapper>
