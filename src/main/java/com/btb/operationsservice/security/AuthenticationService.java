@@ -8,11 +8,9 @@ import org.springframework.security.core.authority.AuthorityUtils;
 
 public class AuthenticationService {
 
-    @Value("${apikey.header.name}")
     private static final String AUTH_TOKEN_HEADER_NAME = "BTB-API-KEY";
 
-    @Value("${apikey.value}")
-    private static final String AUTH_TOKEN = "Baeldung";
+    private static final String AUTH_TOKEN = "6A08393C-0EF9-47C1-8097-6F09F818EDE4";
 
     public static Authentication getAuthentication(HttpServletRequest request) {
         String apiKey = request.getHeader(AUTH_TOKEN_HEADER_NAME);
