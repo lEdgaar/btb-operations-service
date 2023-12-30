@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.btb.operationsservice.persistence.mapper.EventTypeMapper">
+
+    <cache/>
+
+    <sql id="tableName">EVENT_TYPES</sql>
+
+    <resultMap id="resultMap" type="com.btb.operationsservice.entity.EventType">
+
+        <id property="id" column="ID" javaType="Long" jdbcType="BIGINT" />
+
+        <result property="name" column="NAME" javaType="String" jdbcType="VARCHAR" />
+
+        <result property="internalCode" column="INTERNAL_CODE" javaType="String" jdbcType="VARCHAR" />
+
+    </resultMap>
+
+    <sql id="selectColumnNamesClause">
+        RES.ID,
+		RES.NAME,
+		RES.INTERNAL_CODE
+    </sql>
+
+    <sql id="whereFilteredClause">
+        <if test="id != null">
+            AND RES.ID=#{id}
+        </if>
+        <if test="name != null">
+            AND RES.NAME=#{name}
+        </if>
+        <if test="internalCode != null">
+            AND RES.INTERNAL_CODE=#{internalCode}
+        </if>
+    </sql>
+
+    <sql id="insertColumnNamesClause">
+        NAME
+        ,INTERNAL_CODE
+    </sql>
+
+    <sql id="insertValuesClause">
+        #{name}
+        ,#{internalCode}
+    </sql>
+
+    <sql id="updateSetClause">
+        NAME=#{name}
+        ,INTERNAL_CODE=#{internalCode}
+    </sql>
+
+    <select id="findById" resultMap="resultMap" parameterType="Long" useCache="true" flushCache="false">
+        select
+        <include refid="selectColumnNamesClause" />
+        from
+        <include refid="tableName" />
+        RES
+        where
+        RES.ID=#{value}
+    </select>
+
+    <select id="findEventTypeByInternalCode" resultMap="resultMap" parameterType="String" useCache="true" flushCache="false">
+        select
+        <include refid="selectColumnNamesClause" />
+        from
+        <include refid="tableName" />
+        RES
+        where
+        RES.INTERNAL_CODE =#{value}
+        LIMIT 1
+    </select>
+
+    <select id="findAll" resultMap="resultMap">
+        select
+        <include refid="selectColumnNamesClause" />
+        from
+        <include refid="tableName" />
+        RES
+        order by
+        RES.ID asc
+    </select>
+
+    <select id="findByFilter" resultMap="resultMap"
+            parameterType="com.btb.operationsservice.entity.EventType">
+        select
+        <include refid="selectColumnNamesClause" />
+        from
+        <include refid="tableName" />
+        RES
+        where 1=1
+        <include refid="whereFilteredClause" />
+        order by
+        RES.ID asc
+    </select>
+
+    <insert id="save" parameterType="com.btb.operationsservice.entity.EventType"
+            useGeneratedKeys="true" keyColumn="ID" keyProperty="id" flushCache="true">
+        insert into
+        <include refid="tableName" />
+        (
+        <include refid="insertColumnNamesClause" />
+        )
+        values
+        (
+        <include refid="insertValuesClause" />
+        )
+    </insert>
+
+    <update id="update" parameterType="com.btb.operationsservice.entity.EventType" flushCache="true">
+        update
+        <include refid="tableName" />
+        set
+        <include refid="updateSetClause" />
+        where
+        ID=#{id}
+    </update>
+
+    <delete id="delete" parameterType="Long" flushCache="true">
+        delete from
+        <include refid="tableName" />
+        where
+        ID=#{value}
+    </delete>
+
+</mapper>
