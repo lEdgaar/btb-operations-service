@@ -20,7 +20,10 @@ public class EventTypeServiceImpl implements EventTypeService {
         if (!StringUtils.hasText(internalCode)) {
             throw new EventTypeException(EventTypeErrorCodes.EVENT_TYPE_INTERNAL_CODE_NOT_NULL, EventTypeErrorCodes.EVENT_TYPE_INTERNAL_CODE_NOT_NULL.getKey());
         }
+        
+        EventType eventType = new EventType();
+        eventType.setInternalCode(internalCode);
 
-        return eventTypeMapper.findEventTypeByInternalCode(internalCode);
+        return eventTypeMapper.findByFilter(eventType).stream().findFirst().orElse(null);
     }
 }
